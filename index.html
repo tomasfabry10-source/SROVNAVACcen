@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Price Battle 2026 | Portfolio Comparison</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --coke-red: #ed1c16;
+            --pepsi-blue: #005cb4;
+            --bg-gray: #f2f2f2;
+            --monster-green: #a2cf32;
+        }
+
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg-gray); margin: 0; padding: 10px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; }
+        
+        header { background: #000; color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--coke-red); }
+        .discount-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; background: #e9ecef; }
+        .disc-group { text-align: center; }
+        .disc-group label { display: block; font-size: 0.75rem; font-weight: bold; margin-bottom: 5px; color: #495057; }
+        .disc-input { width: 70%; padding: 8px; border: 2px solid #ced4da; border-radius: 8px; font-size: 1.1rem; text-align: center; font-weight: bold; }
+        .coke-border { border-color: var(--coke-red); color: var(--coke-red); }
+        .pepsi-border { border-color: var(--pepsi-blue); color: var(--pepsi-blue); }
+
+        .cat-title { background: #343a40; color: #fff; padding: 8px 15px; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; padding: 10px; font-size: 0.75rem; color: #6c757d; border-bottom: 2px solid #dee2e6; }
+        td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.9rem; }
+        
+        .name-col { text-align: left; font-weight: 600; width: 40%; }
+        .price-main { display: block; font-weight: bold; font-size: 1rem; }
+        .price-old { display: block; font-size: 0.7rem; color: #adb5bd; text-decoration: line-through; }
+        
+        .diff-tag { font-weight: bold; padding: 3px 6px; border-radius: 4px; font-size: 0.85rem; }
+        .diff-red { color: var(--coke-red); background: #ffe3e3; }
+        .diff-green { color: #28a745; background: #e3f9e5; }
+
+        .icon-type { font-size: 0.8rem; margin-right: 6px; color: #6c757d; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>ULTIMATE PORTFOLIO BATTLE 2026</h1>
+        <p style="margin:5px 0 0; opacity:0.7;">Kompletní srovnání ceníků pro obchodní zástupce</p>
+    </header>
+
+    <div class="discount-section">
+        <div class="disc-group">
+            <label>SLEVA COCA-COLA (%)</label>
+            <input type="number" id="sc" class="disc-input coke-border" value="0" oninput="run()">
+        </div>
+        <div class="disc-group">
+            <label>SLEVA PEPSI/KMV (%)</label>
+            <input type="number" id="sp" class="disc-input pepsi-border" value="0" oninput="run()">
+        </div>
+    </div>
+
+    <div id="app"></div>
+</div>
+
+<script>
+    const dataset = [
+        {
+            category: "KOLOVÉ NÁPOJE & HLAVNÍ FORMÁTY",
+            items: [
+                { name: "Sklo: Cola 0.33l vs Pepsi 0.25l", c: 24.70, p: 20.90, icon: "fa-glass-whiskey" },
+                { name: "Sklo: Cola 0.20l vs Pepsi 0.25l", c: 23.00, p: 20.90, icon: "fa-glass-whiskey" },
+                { name: "PET: Cola 0.50l vs Pepsi 0.50l", c: 25.91, p: 24.90, icon: "fa-bottle-water" },
+                { name: "Plech: Cola 0.33l vs Pepsi 0.33l", c: 21.27, p: 19.90, icon: "fa-bolt" }
+            ]
+        },
+        {
+            category: "ENERGETICKÉ NÁPOJE",
+            items: [
+                { name: "Monster 0.5l vs Rockstar/Guarana 0.5l", c: 32.33, p: 25.50, icon: "fa-bolt" },
+                { name: "Monster 0.5l vs Rockstar/Guarana 0.25l", c: 32.33, p: 17.50, icon: "fa-bolt" }
+            ]
+        },
+        {
+            category: "VODY (SKLO & PET)",
+            items: [
+                { name: "Natura 0.3l vs Mattoni/Aquila 0.33l", c: 8.30, p: 8.00, icon: "fa-tint" },
+                { name: "Römerquelle 0.33l vs Mattoni 0.33l", c: 17.00, p: 8.00, icon: "fa-star" },
+                { name: "Natura PET 0.5l vs Aquila/Mattoni 0.5l", c: 14.10, p: 13.00, icon: "fa-bottle-water" }
+            ]
+        },
+        {
+            category: "TONIKY (MIXERS)",
+            items: [
+                { name: "Kinley 0.25l vs Schweppes 0.25l", c: 24.70, p: 20.90, icon: "fa-cocktail" },
+                { name: "Kinley 0.25l Plech vs Schw. 0.33l Plech", c: 21.27, p: 21.30, icon: "fa-bolt" }
+            ]
+        },
+        {
+            category: "DŽUSY & ČAJE",
+            items: [
+                { name: "Cappy 0.25l vs Granini 0.20l", c: 26.00, p: 22.90, icon: "fa-apple-alt" },
+                { name: "Cappy 0.25l vs Toma 0.25l", c: 26.00, p: 21.90, icon: "fa-apple-alt" },
+                { name: "FuzeTea 0.25l vs Lipton 0.25l", c: 24.00, p: 20.90, icon: "fa-leaf" }
+            ]
+        }
+    ];
+
+    function run() {
+        const dc = parseFloat(document.getElementById('sc').value) || 0;
+        const dp = parseFloat(document.getElementById('sp').value) || 0;
+        const app = document.getElementById('app');
+        app.innerHTML = "";
+
+        dataset.forEach(g => {
+            let res = `<div class="cat-title">${g.category}</div>`;
+            res += `<table><thead><tr><th>Produkt</th><th>Coke Netto</th><th>Pepsi Netto</th><th>Rozdíl</th></tr></thead><tbody>`;
+            g.items.forEach(i => {
+                const nc = i.c * (1 - dc/100);
+                const np = i.p * (1 - dp/100);
+                const d = nc - np;
+                res += `<tr>
+                    <td class="name-col"><i class="fas ${i.icon} icon-type"></i> ${i.name}</td>
+                    <td><span class="price-old">${i.c.toFixed(2)}</span><span class="price-main">${nc.toFixed(2)}</span></td>
+                    <td><span class="price-old">${i.p.toFixed(2)}</span><span class="price-main">${np.toFixed(2)}</span></td>
+                    <td><span class="diff-tag ${d > 0 ? 'diff-red' : 'diff-green'}">${(d > 0 ? '+' : '') + d.toFixed(2)} Kč</span></td>
+                </tr>`;
+            });
+            res += `</tbody></table>`;
+            app.innerHTML += res;
+        });
+    }
+
+    run();
+</script>
+
+</body>
+</html>
