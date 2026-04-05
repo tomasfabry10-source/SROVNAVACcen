@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Price Battle 2026 | Portfolio Comparison</title>
+    <title>INTERNÍ SROVNÁVACÍ KALKULAČKA 2026</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -47,7 +47,7 @@
 
 <div class="container">
     <header>
-        <h1>ULTIMATE PORTFOLIO BATTLE 2026</h1>
+        <h1>INTERNÍ SROVNÁVACÍ KALKULAČKA 2026</h1>
         <p style="margin:5px 0 0; opacity:0.7;">Kompletní srovnání ceníků pro obchodní zástupce</p>
     </header>
 
@@ -73,30 +73,7 @@
                 { name: "Sklo: Cola 0.33l vs Pepsi 0.25l", c: 24.70, p: 20.90, icon: "fa-glass-whiskey" },
                 { name: "Sklo: Cola 0.20l vs Pepsi 0.25l", c: 23.00, p: 20.90, icon: "fa-glass-whiskey" },
                 { name: "PET: Cola 0.50l vs Pepsi 0.50l", c: 25.91, p: 24.90, icon: "fa-bottle-water" },
-                { name: "Plech: Cola 0.33l vs Pepsi 0.33l", c: 21.27, p: 20.90, icon: "fa-bolt" } // Opraveno na 20.90
-            ]
-        },
-        {
-            category: "POSTMIX / BIB (PŘEPOČET NA LITRY NÁPOJE)",
-            items: [
-                { 
-                    name: "BIB 5L: Cola / Zero / Tonic", 
-                    c: 1517.00, p: 1390.00, 
-                    volC: 32, volP: 30, // Výtěžnost v litrech
-                    icon: "fa-box", type: "bib" 
-                },
-                { 
-                    name: "BIB 5L: Fanta/Sprite vs Mirinda", 
-                    c: 1290.00, p: 1158.30, 
-                    volC: 27, volP: 25, 
-                    icon: "fa-box", type: "bib" 
-                },
-                { 
-                    name: "BIB 20L: Coca-Cola vs Pepsi", 
-                    c: 6068.00, p: 5559.00, 
-                    volC: 128, volP: 120, 
-                    icon: "fa-box", type: "bib" 
-                }
+                { name: "Plech: Cola 0.33l vs Pepsi 0.33l", c: 21.27, p: 20.90, icon: "fa-bolt" }
             ]
         },
         {
@@ -128,6 +105,29 @@
                 { name: "Cappy 0.25l vs Toma 0.25l", c: 26.00, p: 21.90, icon: "fa-apple-alt" },
                 { name: "FuzeTea 0.25l vs Lipton 0.25l", c: 24.00, p: 20.90, icon: "fa-leaf" }
             ]
+        },
+        {
+            category: "POSTMIX / BIB (PŘEPOČET NA LITRY NÁPOJE)",
+            items: [
+                { 
+                    name: "BIB 5L: Cola / Zero / Tonic", 
+                    c: 1517.00, p: 1390.00, 
+                    volC: 32, volP: 30, 
+                    icon: "fa-box", type: "bib" 
+                },
+                { 
+                    name: "BIB 5L: Fanta/Sprite vs Mirinda", 
+                    c: 1290.00, p: 1158.30, 
+                    volC: 27, volP: 25, 
+                    icon: "fa-box", type: "bib" 
+                },
+                { 
+                    name: "BIB 20L: Coca-Cola vs Pepsi", 
+                    c: 6068.00, p: 5559.00, 
+                    volC: 128, volP: 120, 
+                    icon: "fa-box", type: "bib" 
+                }
+            ]
         }
     ];
 
@@ -150,13 +150,11 @@
                 let subP = "";
 
                 if (i.type === "bib") {
-                    // Výpočet ceny za litr a deci pro BIB
                     const pricePerLiterC = nc / i.volC;
                     const pricePerLiterP = np / i.volP;
                     const pricePerDlC = pricePerLiterC / 10;
                     const pricePerDlP = pricePerLiterP / 10;
                     
-                    // Rozdíl počítáme na 1 litr nápoje, aby to bylo srovnatelné
                     diff = pricePerLiterC - pricePerLiterP;
 
                     subC = `<span class="price-sub">1l = ${pricePerLiterC.toFixed(2)} Kč<br>1dl = <b>${pricePerDlC.toFixed(2)} Kč</b></span>
