@@ -28,17 +28,19 @@
 
         table { width: 100%; border-collapse: collapse; }
         th { background: #f8f9fa; padding: 10px; font-size: 0.75rem; color: #6c757d; border-bottom: 2px solid #dee2e6; }
-        td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.9rem; }
+        td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; font-size: 0.9rem; vertical-align: middle; }
         
-        .name-col { text-align: left; font-weight: 600; width: 40%; }
+        .name-col { text-align: left; font-weight: 600; width: 35%; }
         .price-main { display: block; font-weight: bold; font-size: 1rem; }
         .price-old { display: block; font-size: 0.7rem; color: #adb5bd; text-decoration: line-through; }
+        .price-sub { display: block; font-size: 0.75rem; color: #666; margin-top: 2px; line-height: 1.2; }
         
         .diff-tag { font-weight: bold; padding: 3px 6px; border-radius: 4px; font-size: 0.85rem; }
         .diff-red { color: var(--coke-red); background: #ffe3e3; }
         .diff-green { color: #28a745; background: #e3f9e5; }
 
         .icon-type { font-size: 0.8rem; margin-right: 6px; color: #6c757d; }
+        .yield-badge { font-size: 0.7rem; background: #eee; padding: 2px 5px; border-radius: 3px; display: inline-block; margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -71,7 +73,30 @@
                 { name: "Sklo: Cola 0.33l vs Pepsi 0.25l", c: 24.70, p: 20.90, icon: "fa-glass-whiskey" },
                 { name: "Sklo: Cola 0.20l vs Pepsi 0.25l", c: 23.00, p: 20.90, icon: "fa-glass-whiskey" },
                 { name: "PET: Cola 0.50l vs Pepsi 0.50l", c: 25.91, p: 24.90, icon: "fa-bottle-water" },
-                { name: "Plech: Cola 0.33l vs Pepsi 0.33l", c: 21.27, p: 19.90, icon: "fa-bolt" }
+                { name: "Plech: Cola 0.33l vs Pepsi 0.33l", c: 21.27, p: 20.90, icon: "fa-bolt" } // Opraveno na 20.90
+            ]
+        },
+        {
+            category: "POSTMIX / BIB (PŘEPOČET NA LITRY NÁPOJE)",
+            items: [
+                { 
+                    name: "BIB 5L: Cola / Zero / Tonic", 
+                    c: 1517.00, p: 1390.00, 
+                    volC: 32, volP: 30, // Výtěžnost v litrech
+                    icon: "fa-box", type: "bib" 
+                },
+                { 
+                    name: "BIB 5L: Fanta/Sprite vs Mirinda", 
+                    c: 1290.00, p: 1158.30, 
+                    volC: 27, volP: 25, 
+                    icon: "fa-box", type: "bib" 
+                },
+                { 
+                    name: "BIB 20L: Coca-Cola vs Pepsi", 
+                    c: 6068.00, p: 5559.00, 
+                    volC: 128, volP: 120, 
+                    icon: "fa-box", type: "bib" 
+                }
             ]
         },
         {
@@ -114,16 +139,52 @@
 
         dataset.forEach(g => {
             let res = `<div class="cat-title">${g.category}</div>`;
-            res += `<table><thead><tr><th>Produkt</th><th>Coke Netto</th><th>Pepsi Netto</th><th>Rozdíl</th></tr></thead><tbody>`;
+            res += `<table><thead><tr><th>Produkt</th><th>Coke Netto</th><th>Pepsi Netto</th><th>Rozdíl (Jednotka)</th></tr></thead><tbody>`;
+            
             g.items.forEach(i => {
                 const nc = i.c * (1 - dc/100);
                 const np = i.p * (1 - dp/100);
-                const d = nc - np;
+                
+                let diff = 0;
+                let subC = "";
+                let subP = "";
+
+                if (i.type === "bib") {
+                    // Výpočet ceny za litr a deci pro BIB
+                    const pricePerLiterC = nc / i.volC;
+                    const pricePerLiterP = np / i.volP;
+                    const pricePerDlC = pricePerLiterC / 10;
+                    const pricePerDlP = pricePerLiterP / 10;
+                    
+                    // Rozdíl počítáme na 1 litr nápoje, aby to bylo srovnatelné
+                    diff = pricePerLiterC - pricePerLiterP;
+
+                    subC = `<span class="price-sub">1l = ${pricePerLiterC.toFixed(2)} Kč<br>1dl = <b>${pricePerDlC.toFixed(2)} Kč</b></span>
+                            <span class="yield-badge">Výtěžnost: ${i.volC}L</span>`;
+                    subP = `<span class="price-sub">1l = ${pricePerLiterP.toFixed(2)} Kč<br>1dl = <b>${pricePerDlP.toFixed(2)} Kč</b></span>
+                            <span class="yield-badge">Výtěžnost: ${i.volP}L</span>`;
+                } else {
+                    diff = nc - np;
+                }
+
                 res += `<tr>
                     <td class="name-col"><i class="fas ${i.icon} icon-type"></i> ${i.name}</td>
-                    <td><span class="price-old">${i.c.toFixed(2)}</span><span class="price-main">${nc.toFixed(2)}</span></td>
-                    <td><span class="price-old">${i.p.toFixed(2)}</span><span class="price-main">${np.toFixed(2)}</span></td>
-                    <td><span class="diff-tag ${d > 0 ? 'diff-red' : 'diff-green'}">${(d > 0 ? '+' : '') + d.toFixed(2)} Kč</span></td>
+                    <td>
+                        <span class="price-old">${i.c.toFixed(2)}</span>
+                        <span class="price-main">${nc.toFixed(2)}</span>
+                        ${subC}
+                    </td>
+                    <td>
+                        <span class="price-old">${i.p.toFixed(2)}</span>
+                        <span class="price-main">${np.toFixed(2)}</span>
+                        ${subP}
+                    </td>
+                    <td>
+                        <span class="diff-tag ${diff > 0 ? 'diff-red' : 'diff-green'}">
+                            ${(diff > 0 ? '+' : '') + diff.toFixed(2)} Kč
+                            ${i.type === 'bib' ? ' / litr' : ''}
+                        </span>
+                    </td>
                 </tr>`;
             });
             res += `</tbody></table>`;
